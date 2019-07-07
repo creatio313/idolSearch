@@ -18,10 +18,17 @@ router.get('/', function(req, res, next) {
   /** idol1のID調査 */
   let con = mysql.createConnection(mysql_setting);
   con.connect();
-  con.query('SELECT idol_id FROM idol',
-    function(error, result, fields){
+  con.query('SELECT idol_id FROM idol WHERE name = ? OR name = ?',[idol1req,idol2req],
+    (error, result, fields)=>{
       if(error == null){
-        res.render('result', { idol1 : result[0].idol_id+idol1req, idol2 : idol2req });
+        if(result == "" || result.length < 2){
+          /* エラーハンドリング方針が決定し次第記述 */
+          result = [
+            {idol_id:"abc"}
+          ];
+        }
+        res.render('result', { idol1 : result[0].idol_id+idol1req, idol2 : result.length+idol2req });
+        //res.render('result', { idol1 : result[0].idol_id+idol1req, idol2 : idol2req });
       }
     }
   );
