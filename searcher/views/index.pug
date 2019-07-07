@@ -1,6 +1,13 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
-  p Additional #{title}
+  h1 #{title}
+  form(method="get" action="/result")
+    div
+      label(for="idol1", required=true) 共演者を知りたいアイドルの名前を入力してください。
+      input#idol1(type="text" name="idol1")
+    div
+      label(for="idol2", required=true) 共演者の名前を入力して下さい。
+      input#idol2(type="text", name="idol2")
+    div
+      input(type="submit", value="そうしん！")
