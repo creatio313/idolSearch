@@ -4,60 +4,62 @@ var router = express.Router();
 var mysql = require('mysql');
 
 let mysql_setting = {
+  connectionLimit : 2,
   host : 'localhost',
   user : 'idolapi',
   password : '12345678',
   database : 'idolsearch'
 }
+let con = mysql.createPool(mysql_setting);
 
 router.get('/', function(req, res, next) {
   let idol1req = req.query.idol1;
   let idol2req = req.query.idol2;
-  let idol1id = "";
 
-  /** idol1のID調査 */
-  let con = mysql.createConnection(mysql_setting);
-  con.connect();
-  con.query('SELECT idol_id FROM idol WHERE name = ? OR name = ?',[idol1req,idol2req],
-    (error, result, fields)=>{
-      if(error == null){
-        if(result == "" || result.length < 2){
-          /* エラーハンドリング方針が決定し次第記述 */
-          result = [
-            {idol_id:"abc"}
-          ];
-        }
-        res.render('result', { idol1 : result[0].idol_id+idol1req, idol2 : result.length+idol2req });
-        //res.render('result', { idol1 : result[0].idol_id+idol1req, idol2 : idol2req });
-      }
+  Promise.all([
+    getID([idol1req]),
+    getID([idol2req])
+  ]).then( (value)=>{
+    if(value[0].length==0 || value[1].length==0){
+      let nofound="";
+      if(value[0].length==0)nofound=idol1req;
+      if(value[1].length==0)nofound=idol2req;
+      res.render('result', {errmsg: "指定されたアイドル「"+nofound+"」が見つかりませんでした。"});
+    }else{
+      let idol1ID = value[0][0].idol_id;
+      let idol2ID = value[1][0].idol_id;
+      con.query(
+        'SELECT event.name FROM appearance JOIN event ON appearance.event_id = event.event_id WHERE appearance.idol_id = ? OR appearance.idol_id = ? GROUP BY event.name HAVING COUNT(event.name)>1',
+        [idol1ID,idol2ID],
+        (err,result,fields)=>{
+          if(err){
+            throw err;
+          } else {
+            res.render('result',{togcount:result.length});
+          }
+      });
     }
-  );
-  con.end();
+  }).catch ((err)=>{
+    res.locals.message = err.message;
+    res.locals.error = err;
+    res.status(err.status || 500);
+    res.render('error');
+  }).finally(()=>{
+    //con.end();
+  });
 });
-/*
-async function existCheck(idol1name,idol2name){
-  let id1 = await askIdolId(idol1name);
-  let id2 = await askIdolId(idol2name);
-  return id1+","+id2;
-}
-async function askIdolId(idolname){
-  let idn = "aaa";
-  let con = mysql.createConnection(mysql_setting);
-  con.connect();
-  con.query('SELECT idol_id FROM idol',
-    (error, result, fields)=>{
-      if(error == null){
-        idn = result[0].idol_id;
-        idn = result[0].length;
-      }else{
-        return "aiu";
+function getID(placeholder){
+  return new Promise((resolve, reject)=>{
+    con.query('SELECT idol_id FROM idol WHERE name=?',
+    [placeholder],
+    (err,result,fields)=>{
+      if(err){
+        reject(err);
+      } else {
+        resolve(result,fields);
       }
-    }
-  );
-  con.end();
-  while(idn==""){}
-  return idn;
+    })
+  })
 }
-*/
 
 module.exports = router;
