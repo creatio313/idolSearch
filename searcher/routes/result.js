@@ -24,7 +24,11 @@ router.get('/', function(req, res, next) {
       let nofound="";
       if(value[0].length==0)nofound=idol1req;
       if(value[1].length==0)nofound=idol2req;
-      res.render('result', {errmsg: "指定されたアイドル「"+nofound+"」が見つかりませんでした。"});
+      res.render('result', {
+        togcount : 0,
+        eventlist : [],
+        errmsg: "指定されたアイドル「"+nofound+"」が見つかりませんでした。"
+      });
     }else{
       let idol1ID = value[0][0].idol_id;
       let idol2ID = value[1][0].idol_id;
@@ -35,7 +39,10 @@ router.get('/', function(req, res, next) {
           if(err){
             throw err;
           } else {
-            res.render('result',{togcount:result.length});
+            res.render('result',{
+              togcount:result.length,
+              eventlist:result
+            });
           }
       });
     }

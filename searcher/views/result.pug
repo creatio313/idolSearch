@@ -1,5 +1,10 @@
 extends layout
 
 block content
-  h1 #{title}
-  p 共演回数は#{togcount}です。
+  if errmsg
+    p #{errmsg}
+  else
+    p 共演回数は#{togcount}です。
+    ul
+      each event in eventlist
+        li #{event.name}
