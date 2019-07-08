@@ -10,15 +10,16 @@ let mysql_setting = {
   password : '12345678',
   database : 'idolsearch'
 }
-let con = mysql.createPool(mysql_setting);
 
 router.get('/', function(req, res, next) {
   let idol1req = req.query.idol1;
   let idol2req = req.query.idol2;
 
+  let con = mysql.createPool(mysql_setting);
+
   Promise.all([
-    getID([idol1req]),
-    getID([idol2req])
+    getID(con, [idol1req]),
+    getID(con, [idol2req])
   ]).then( (value)=>{
     if(value[0].length==0 || value[1].length==0){
       let nofound="";
@@ -29,6 +30,7 @@ router.get('/', function(req, res, next) {
         eventlist : [],
         errmsg: "指定されたアイドル「"+nofound+"」が見つかりませんでした。"
       });
+      con.end();
     }else{
       let idol1ID = value[0][0].idol_id;
       let idol2ID = value[1][0].idol_id;
@@ -44,6 +46,7 @@ router.get('/', function(req, res, next) {
               eventlist:result
             });
           }
+        con.end();
       });
     }
   }).catch ((err)=>{
@@ -51,11 +54,9 @@ router.get('/', function(req, res, next) {
     res.locals.error = err;
     res.status(err.status || 500);
     res.render('error');
-  }).finally(()=>{
-    //con.end();
   });
 });
-function getID(placeholder){
+function getID(con, placeholder){
   return new Promise((resolve, reject)=>{
     con.query('SELECT idol_id FROM idol WHERE name=?',
     [placeholder],
