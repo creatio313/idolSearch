@@ -4,7 +4,10 @@ block content
   if errmsg
     p #{errmsg}
   else
-    p 共演回数は#{togcount}です。
-    ul
+    p 共演回数は#{togcount}回です。
+    table
+      tr
+        th イベント名
       each event in eventlist
-        li #{event.name}
+        tr
+          td #{event.name}
