@@ -2,12 +2,15 @@ extends layout
 
 block content
   h1 #{title}
-  form(method="get" action="/result")
+  if noFoundName
+    each idol in noFoundName
+      p.errmsg 指定されたアイドル「#{idol}」が見つかりませんでした。
+  form#mainform(method="get" action="/result")
     div
       label(for="idol1") 共演者を知りたいアイドルの名前を入力してください。
       input#idol1(type="text" name="idol1" required="true")
     div
       label(for="idol2", required=true) 共演者の名前を入力して下さい。
-      input#idol2(type="text", name="idol2" required=true)
+      input#idol2(type="text", name="idol2" required="true")
     div
       input(type="submit", value="そうしん！")

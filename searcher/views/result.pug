@@ -1,10 +1,9 @@
 extends layout
 
 block content
-  if errmsg
-    p #{errmsg}
-  else
+  h2 共演回数一覧
     p 共演回数は#{togcount}回です。
+  h2 共演イベント一覧
     table
       tr
         th イベント名
