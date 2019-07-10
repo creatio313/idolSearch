@@ -1,3 +1,6 @@
+const getID = require('../dlayer/getIdolID');
+const getAppearance = require('../dlayer/getCommonAppearance');
+
 var express = require('express');
 var router = express.Router();
 
@@ -29,22 +32,19 @@ router.get('/', function(req, res, next) {
         res.render('index', {noFoundName : noFoundName});
         con.end();
       }else{
+
         let idol1ID = response[0][0].idol_id;
         let idol2ID = response[1][0].idol_id;
-        con.query(
-          'SELECT event.name FROM appearance JOIN event ON appearance.event_id = event.event_id WHERE appearance.idol_id = ? OR appearance.idol_id = ? GROUP BY event.name HAVING COUNT(event.name)>1',
-          [idol1ID, idol2ID],
-          (err, result, fields) => {
-            if(err){
-              throw err;
-            } else {
-              res.render('result', {
-                togcount:result.length,
-                eventlist:result
-              });
-            }
+        getAppearance(con, idol1ID, idol2ID).then(
+          response => {
+            res.render('result', {togcount : response.length, eventlist : response});
             con.end();
-        });
+          },
+          error => {
+            con.end();
+            throw err;
+          }
+        );
       }
     },
     err => {
@@ -55,19 +55,5 @@ router.get('/', function(req, res, next) {
     }
   );
 });
-
-function getID(con, placeholder){
-  return new Promise((resolve, reject)=>{
-    con.query('SELECT idol_id FROM idol WHERE name=?',
-    [placeholder],
-    (err, result, fields) => {
-      if(err){
-        reject(err);
-      } else {
-        resolve(result, fields);
-      }
-    })
-  })
-}
 
 module.exports = router;
