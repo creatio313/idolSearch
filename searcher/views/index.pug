@@ -1,16 +1,20 @@
 extends layout
 
 block content
-  h1 #{title}
-  if noFoundName
-    each idol in noFoundName
-      p.errmsg 指定されたアイドル「#{idol}」が見つかりませんでした。
-  form#mainform(method="get" action="/result")
-    div
-      label(for="idol1") 共演者を知りたいアイドルの名前を入力してください。
-      input#idol1(type="text" name="idol1" required="true")
-    div
-      label(for="idol2", required=true) 共演者の名前を入力して下さい。
-      input#idol2(type="text", name="idol2" required="true")
-    div
-      input(type="submit", value="そうしん！")
+  h2 共演検索
+    p 指定されたアイドルの共演回数と共演したイベント名を検索することができます。
+    if noFoundName
+      ul
+      each idol in noFoundName
+        li.errmsg 指定されたアイドル「#{idol}」が見つかりませんでした。
+    form#mainform(method="get" action="/result")
+      div
+        label(for="idol1") 共演者を知りたいアイドルの名前を入力してください。
+        br
+        input#idol1(type="text" name="idol1" required="true" maxlength="256")
+      div
+        label(for="idol2", required=true) 共演者の名前を入力して下さい。
+        br
+        input#idol2(type="text", name="idol2" required="true" maxlength="256")
+      div
+        input(type="submit", value="検索")

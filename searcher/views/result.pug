@@ -5,8 +5,12 @@ block content
     p 共演回数は#{togcount}回です。
   h2 共演イベント一覧
     table
-      tr
-        th イベント名
-      each event in eventlist
+      caption
+        p 共演したイベント名の一覧です。
+      thead
         tr
-          td #{event.name}
+          th イベント名
+      tbody
+        each event in eventlist
+          tr
+            td #{event.name}

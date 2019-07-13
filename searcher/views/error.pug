@@ -1,8 +1,9 @@
 extends layout
 
 block content
-  h1 エラーが発生しました。
+  h2 エラーが発生しました。
     p 大変申し訳ありませんが、エラーが発生したため、ご利用になれません。以下のエラー内容を管理者にお申し出ください。
-    h2= message
-      h3= error.status
-        pre #{error.stack}
+    section
+      h3= message
+        h4= error.status
+          pre #{error.stack}

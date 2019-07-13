@@ -29,7 +29,7 @@ router.get('/', function(req, res, next) {
         let noFoundName = [];
         if(response[0].length == 0)noFoundName.push(idol1Name);
         if(response[1].length == 0)noFoundName.push(idol2Name);
-        res.render('index', {noFoundName : noFoundName});
+        res.render('index', {title: 'アイドル共演探索システム|再検索',noFoundName : noFoundName});
         con.end();
       }else{
 
@@ -37,7 +37,7 @@ router.get('/', function(req, res, next) {
         let idol2ID = response[1][0].idol_id;
         getAppearance(con, idol1ID, idol2ID).then(
           response => {
-            res.render('result', {togcount : response.length, eventlist : response});
+            res.render('result', {title: 'アイドル共演探索システム|検索結果',togcount : response.length, eventlist : response});
             con.end();
           },
           error => {
