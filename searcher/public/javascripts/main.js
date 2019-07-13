@@ -1,3 +1,11 @@
+document.addEventListener('DOMContentLoaded', function(){
+  var userAgent = window.navigator.userAgent.toLowerCase();
+  if(userAgent.indexOf('msie') != -1 || userAgent.indexOf('trident') != -1) {
+    document.body.style.display = 'none';
+    location.href = 'https://www.google.co.jp/chrome/';
+  }
+}, false);
+
 $(function(){
   /** フォームの送信をトリガーに、全角英数を半角に変換する。 */
   $("#mainform").submit(function(){
