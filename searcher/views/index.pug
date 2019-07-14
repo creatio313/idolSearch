@@ -5,8 +5,8 @@ block content
     p 指定されたアイドルの共演回数と共演したイベント名を検索することができます。
     if noFoundName
       ul
-      each idol in noFoundName
-        li.errmsg 指定されたアイドル「#{idol}」が見つかりませんでした。
+        each idol in noFoundName
+          li.errmsg 指定されたアイドル「#{idol}」が見つかりませんでした。
     form#mainform(method="get" action="/result")
       div
         label(for="idol1") 共演者を知りたいアイドルの名前を入力してください。
